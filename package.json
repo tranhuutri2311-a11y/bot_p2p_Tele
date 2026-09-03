@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "deploy": "wrangler deploy",
-    "dev": "wrangler dev --test-scheduled",
-    "start": "wrangler dev --test-scheduled",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
     "@types/node": "^26.4.1",
     "typescript": "^5.5.2",
-    "wrangler": "^4.128.0"
+    "wrangler": "^4.128.0",
+    "tsx": "^4.19.2"
   }
 }

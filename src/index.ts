@@ -1,40 +1,10 @@
-/**
- * Welcome to Cloudflare Workers!
- *
- * This is a template for a Scheduled Worker: a Worker that can run on a
- * configurable interval:
- * https://developers.cloudflare.com/workers/platform/triggers/cron-triggers/
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Run `curl "http://localhost:8787/__scheduled?cron=*+*+*+*+*"` to see your Worker in action
- * - Run `npm run deploy` to publish your Worker
- *
- * Bind resources to your Worker in `wrangler.jsonc`. After adding bindings, a type definition for the
- * `Env` object can be regenerated with `npm run cf-typegen`.
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
-
-export default {
-	async fetch(req) {
-		const url = new URL(req.url);
-		url.pathname = '/__scheduled';
-		url.searchParams.append('cron', '* * * * *');
-		return new Response(`To test the scheduled handler, ensure you have used the "--test-scheduled" then try running "curl ${url.href}".`);
-	},
-
-	// The scheduled handler is invoked at the interval set in our wrangler.jsonc's
-	// [[triggers]] configuration.
-	async scheduled(event, env, ctx): Promise<void> {
-		// A Cron Trigger can make requests to other endpoints on the Internet,
-		// publish to a Queue, query a D1 Database, and much more.
-		//
-		// We'll keep it simple and make an API call to a Cloudflare API:
-		let resp = await fetch('https://api.cloudflare.com/client/v4/ips');
-		let wasSuccessful = resp.ok ? 'success' : 'fail';
-
-		// You could store this result in KV, write to a D1 Database, or publish to a Queue.
-		// In this template, we'll just log the result:
-		console.log(`trigger fired at ${event.cron}: ${wasSuccessful}`);
-	},
-} satisfies ExportedHandler<Env>;
+import { handleTelegramUpdate } from './telegram/telegramHandler';
+export interface Env { TELEGRAM_BOT_TOKEN: string; TELEGRAM_WEBHOOK_SECRET: string; BINANCE_PROXY_API_KEY?: string; BINANCE_PROXY_URL?: string; BINANCE_PROXY_SECRET?: string }
+export default { async fetch(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  if (url.pathname !== '/telegram/webhook') return new Response('Not found', { status: 404 });
+  if (request.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+  if (request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== env.TELEGRAM_WEBHOOK_SECRET) return new Response('Unauthorized', { status: 401 });
+  try { await handleTelegramUpdate(await request.json(), env); } catch (error) { console.error('Webhook processing failed', error instanceof Error ? error.message : 'unknown error'); }
+  return new Response('ok');
+} } satisfies ExportedHandler<Env>;
