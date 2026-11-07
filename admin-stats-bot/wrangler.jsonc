@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "binance-p2p-admin-stats-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-31",
+  "observability": {
+    "enabled": true
+  },
+  "services": [
+    {
+      "binding": "STATS_SERVICE",
+      "service": "binance-p2p-telegram-bot"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+TELEGRAM_BOT_TOKEN="replace-with-botfather-token"
+TELEGRAM_WEBHOOK_SECRET="replace-with-random-webhook-secret"
+ADMIN_REPORT_SECRET="replace-with-admin-report-secret"
+ALLOWED_TELEGRAM_USER_IDS="123456789"

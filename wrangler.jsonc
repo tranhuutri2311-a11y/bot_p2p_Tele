@@ -10,7 +10,10 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"kv_namespaces": [{ "binding": "USAGE_KV", "id": "46e27ba2b6a34486812f37a7ed65bdfb" }],
+	"triggers": { "crons": ["0 17 * * 1", "* * * * *"] },
+	"upload_source_maps": true,
+	"vars": { "ALLOWED_GROUP_ADDER_IDS": "5382905870,921077692" }
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
